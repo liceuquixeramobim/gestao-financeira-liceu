@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gestão Financeira - EEMTI Liceu Alfredo Almeida Machado</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      /* PALETA AZUL CLARO E CLEAN */
+      --cor-fundo: #f0f7ff;
+      --cor-card-glass: rgba(255, 255, 255, 0.85);
+      --cor-card-solido: #ffffff;
+      --cor-bordas: #dbeafe;
+      --cor-texto: #1e293b;
+      --cor-suave: #64748b;
+      
+      --cor-primaria: #0284c7;       /* Azul Claro Vibrante */
+      --cor-primaria-hover: #0369a1;
+      --cor-seguro: #10b981;         /* Verde */
+      --cor-atencao: #f59e0b;        /* Amarelo */
+      --cor-perigo: #f97316;         /* Laranja */
+      --cor-alto: #ef4444;           /* Vermelho */
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+    body { 
+      background-color: var(--cor-fundo); 
+      background-image: linear-gradient(180deg, #e0f2fe 0%, #f0f7ff 100%);
+      color: var(--cor-texto); 
+      display: flex; 
+      justify-content: center; 
+      min-height: 100vh; 
+      padding-bottom: 95px; 
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 450px;
+      position: relative;
+    }
+
+    /* TOPO COM LOGO E TEXTO ALINHADOS NA PARTE INFERIOR */
+    .cabecalho-escola {
+      position: relative;
+      height: 180px;
+      background: linear-gradient(180deg, rgba(2, 132, 199, 0.3) 0%, rgba(15, 23, 42, 0.85) 100%), 
+                  url('IMG_0803.jpg') center 25% / cover no-repeat;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+      box-shadow: 0 4px 20px rgba(2, 132, 199, 0.15);
+    }
+
+    .info-escola-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 2;
+      width: 100%;
+      transition: transform 0.3s ease;
+    }
+
+    .logo-escola {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 2px solid #ffffff;
+      background: #ffffff;
+      transition: transform 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .texto-escola h1 {
+      font-size: 0.92rem;
+      color: #ffffff;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .texto-escola p {
+      font-size: 0.73rem;
+      color: #e0f2fe;
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    /* SELETOR DE MÊS */
+    .seletor-mes {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--cor-card-glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      margin: 14px 18px 12px 18px;
+      padding: 8px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--cor-bordas);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.05);
+    }
+
+    .btn-mes {
+      background: #eff6ff;
+      border: 1px solid var(--cor-bordas);
+      color: var(--cor-primaria);
+      font-size: 0.85rem;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn-mes:active { 
+      transform: scale(0.9);
+      background: #dbeafe; 
+    }
+
+    .mes-atual {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--cor-texto);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* CARD DO SEMÁFORO CLEAN */
+    .card-semaforo {
+      background: var(--cor-card-glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 18px;
+      margin: 0 18px 16px 18px;
+      padding: 16px;
+      border: 1px solid var(--cor-bordas);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.05);
+      transition: transform 0.3s ease;
+    }
+
+    .alerta-semaforo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-align: center;
+      padding: 10px;
+      border-radius: 10px;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.82rem;
+      transition: all 0.4s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .resumo-valores {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      text-align: center;
+      border-top: 1px solid var(--cor-bordas);
+      padding-top: 12px;
+      margin-top: 12px;
+    }
+
+    .coluna-valor {
+      background: #f8fafc;
+      padding: 8px 4px;
+      border-radius: 8px;
+      border: 1px solid var(--cor-bordas);
+      transition: transform 0.2s ease;
+    }
+
+    .coluna-valor span {
+      font-size: 0.65rem;
+      color: var(--cor-suave);
+      font-weight: 700;
+      text-transform: uppercase;
+      display: block;
+    }
+
+    .coluna-valor strong {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* ABAS DE CONTEÚDO */
+    .aba-conteudo { 
+      display: none; 
+      padding: 0 18px; 
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .aba-conteudo.ativa { 
+      display: block; 
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card-formulario {
+      background: var(--cor-card-glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid var(--cor-bordas);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.05);
+      margin-bottom: 16px;
+    }
+
+    .titulo-card {
+      font-size: 0.9rem;
+      color: var(--cor-texto);
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .seletor-tipo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      border: 1px solid var(--cor-bordas);
+    }
+
+    .btn-tipo {
+      padding: 9px;
+      text-align: center;
+      border-radius: 6px;
+      color: var(--cor-suave);
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+    }
+
+    .btn-tipo.ativo.ganho { background: #ffffff; color: var(--cor-seguro); border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .btn-tipo.ativo.gasto { background: #ffffff; color: var(--cor-alto); border: 1px solid rgba(239, 68, 68, 0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+    .campo { margin-bottom: 12px; }
+    .campo label { display: block; font-size: 0.72rem; color: var(--cor-suave); font-weight: 600; margin-bottom: 4px; }
+    
+    .campo input, .campo select { 
+      width: 100%; 
+      background: #ffffff;
+      border: 1px solid var(--cor-bordas); 
+      padding: 10px 12px; 
+      border-radius: 8px; 
+      font-size: 0.85rem; 
+      outline: none;
+      color: var(--cor-texto);
+      font-weight: 500;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .campo input:focus, .campo select:focus {
+      border-color: var(--cor-primaria);
+      box-shadow: 0 0 8px rgba(2, 132, 199, 0.2);
+    }
+
+    .grid-2-campos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-salvar {
+      width: 100%;
+      background: var(--cor-primaria);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
+    }
+
+    .btn-salvar:hover { background: var(--cor-primaria-hover); }
+
+    /* REGRA 50/30/20 */
+    .grid-regra-503020 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .card-regra-item {
+      padding: 10px 4px;
+      border-radius: 10px;
+      background: #f8fafc;
+      border: 1px solid var(--cor-bordas);
+    }
+
+    .card-regra-item h6 { font-size: 0.68rem; color: var(--cor-suave); font-weight: 700; }
+    .card-regra-item p { font-size: 0.62rem; color: #94a3b8; margin: 2px 0 4px 0; }
+    .card-regra-item strong { font-size: 0.82rem; color: var(--cor-primaria); font-weight: 700; }
+
+    /* RESULTADO DO INVESTIMENTO */
+    .card-resultado-investimento {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 14px;
+    }
+
+    .linha-res-inv {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      margin-bottom: 6px;
+      color: #334155;
+    }
+
+    .linha-res-inv.destaque {
+      border-top: 1px dashed #a7f3d0;
+      padding-top: 8px;
+      margin-top: 6px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: #15803d;
+    }
+
+    .btn-resetar-tudo {
+      width: 100%;
+      background: #fef2f2;
+      color: var(--cor-alto);
+      border: 1px solid #fecaca;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* LEGENDA DO SEMÁFORO */
+    .item-legenda {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--cor-bordas);
+    }
+
+    .bolinha-cor {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .texto-legenda h5 { font-size: 0.8rem; font-weight: 700; color: var(--cor-texto); }
+    .texto-legenda p { font-size: 0.72rem; color: var(--cor-suave); line-height: 1.3; }
+
+    /* EXTRATO ANIMADO */
+    .item-extrato {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--cor-bordas);
+    }
+
+    .item-extrato:last-child { border-bottom: none; }
+    .item-extrato .info h4 { font-size: 0.82rem; color: var(--cor-texto); font-weight: 600; }
+    .item-extrato .info span { font-size: 0.7rem; color: var(--cor-suave); }
+
+    .lado-direito-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-deletar-item {
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.82rem;
+      padding: 4px;
+    }
+
+    .btn-deletar-item:hover { color: var(--cor-alto); }
+
+    /* MENU INFERIOR DE ALTO DESTAQUE */
+    .menu-inferior {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 426px;
+      height: 66px;
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid #bfdbfe;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      align-items: center;
+      padding: 0 6px;
+      z-index: 1000;
+      box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.25);
+    }
+
+    .item-menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      height: 52px;
+      border-radius: 14px;
+      transition: all 0.25s ease;
+      gap: 3px;
+    }
+
+    .item-menu i { font-size: 1.15rem; }
+
+    .item-menu.ativo { 
+      background: var(--cor-primaria);
+      color: #ffffff !important;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+    }
+
+    .moeda-flutuante {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999;
+      color: var(--cor-seguro);
+      font-weight: 800;
+      font-size: 1rem;
+      animation: flutuarEsumir 1.2s ease-out forwards;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    @keyframes flutuarEsumir {
+      0% { opacity: 1; transform: translateY(0) scale(0.8); }
+      50% { opacity: 1; transform: translateY(-40px) scale(1.1); }
+      100% { opacity: 0; transform: translateY(-80px) scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- TOPO -->
+    <div class="cabecalho-escola">
+      <div class="info-escola-container">
+        <img src="logo.jpg" alt="Logo Liceu" class="logo-escola">
+        <div class="texto-escola">
+          <h1>EEMTI Liceu Alfredo Almeida Machado</h1>
+          <p>🎓 Educação & Controle Financeiro</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SELETOR DE MÊS -->
+    <div class="seletor-mes">
+      <button class="btn-mes" onclick="mudarMes(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="mes-atual">
+        <i class="fa-regular fa-calendar-days" style="color: var(--cor-primaria);"></i>
+        <span id="label-mes-ano">Carregando...</span>
+      </div>
+      <button class="btn-mes" onclick="mudarMes(1)"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SEMÁFORO DE RISCO -->
+    <div class="card-semaforo">
+      <div id="box-status" class="alerta-semaforo" style="background: var(--cor-seguro);">
+        <i id="icone-semaforo" class="fa-solid fa-shield-halved"></i>
+        <span id="texto-semaforo">Carregando análise...</span>
+      </div>
+
+      <div class="resumo-valores">
+        <div class="coluna-valor">
+          <span>Ganhos</span>
+          <strong id="val-ganhos" style="color: var(--cor-seguro);">R$ 0,00</strong>
+        </div>
+        <div class="coluna-valor">
+          <span>Gastos</span>
+          <strong id="val-gastos" style="color: var(--cor-alto);">R$ 0,00</strong>
+        </div>
+        <div class="coluna-valor">
+          <span>Saldo</span>
+          <strong id="val-saldo" style="color: var(--cor-texto);">R$ 0,00</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 1: NOVO LANÇAMENTO -->
+    <div id="aba-adicionar" class="aba-conteudo ativa">
+      <div class="card-formulario">
+        <h3 class="titulo-card"><i class="fa-solid fa-wallet" style="color: var(--cor-primaria);"></i> Novo Lançamento</h3>
+        <form id="form-movimentacao">
+          
+          <div class="seletor-tipo">
+            <div class="btn-tipo ativo ganho" id="btn-tipo-ganho" onclick="trocarTipo('ganho')">
+              <i class="fa-solid fa-arrow-up"></i> Entrou (+)
+            </div>
+            <div class="btn-tipo gasto" id="btn-tipo-gasto" onclick="trocarTipo('gasto')">
+              <i class="fa-solid fa-arrow-down"></i> Saiu (-)
+            </div>
+          </div>
+
+          <div class="campo">
+            <label>Descrição</label>
+            <input type="text" id="input-desc" placeholder="Ex: Conta de Luz, Feira, Salário" required>
+          </div>
+
+          <div class="campo" id="campo-categoria">
+            <label>Categoria do Gasto</label>
+            <select id="select-categoria">
+              <option value="Moradia e Habitação">🏠 Moradia (Aluguel, Luz, Água, Gás)</option>
+              <option value="Alimentação">🍕 Alimentação (Supermercado, Feira)</option>
+              <option value="Transporte">🚌 Transporte (Combustível, Passagens)</option>
+              <option value="Saúde">⚕️ Saúde (Plano, Médico, Farmácia)</option>
+              <option value="Educação">📚 Educação (Mensalidade, Cursos)</option>
+              <option value="Lazer e Estilo de Vida">🎮 Lazer e Estilo de Vida (Viagens, Streaming)</option>
+              <option value="Serviços Financeiros e Dívidas">💳 Serviços Financeiros (Tarifas, Empréstimos)</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label>Valor (R$)</label>
+            <input type="number" step="0.01" id="input-valor" placeholder="0,00" required>
+          </div>
+
+          <div class="campo">
+            <label>Data do Registro</label>
+            <input type="date" id="input-data" required>
+          </div>
+
+          <button type="submit" class="btn-salvar" id="btn-submit-form">Registrar Movimentação</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ABA 2: GRÁFICO MENSAL -->
+    <div id="aba-grafico" class="aba-conteudo">
+      <div class="card-formulario">
+        <h3 class="titulo-card"><i class="fa-solid fa-chart-pie" style="color: var(--cor-primaria);"></i> Gastos do Mês por Categoria</h3>
+        <div style="position: relative; height: 260px; width: 100%;">
+          <canvas id="graficoCategorias"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 3: RELATÓRIO ANUAL -->
+    <div id="aba-anual" class="aba-conteudo">
+      <div class="card-formulario">
+        <h3 class="titulo-card">
+          <i class="fa-solid fa-calendar-check" style="color: var(--cor-primaria);"></i> 
+          Resumo Anual (<span id="ano-relatorio">2026</span>)
+        </h3>
+        
+        <div class="resumo-valores" style="margin-top: 0; padding-top: 0; border: none;">
+          <div class="coluna-valor">
+            <span>Entradas</span>
+            <strong id="anual-ganhos" style="color: var(--cor-seguro);">R$ 0,00</strong>
+          </div>
+          <div class="coluna-valor">
+            <span>Saídas</span>
+            <strong id="anual-gastos" style="color: var(--cor-alto);">R$ 0,00</strong>
+          </div>
+          <div class="coluna-valor">
+            <span>Saldo Anual</span>
+            <strong id="anual-saldo" style="color: var(--cor-texto);">R$ 0,00</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-formulario">
+        <h3 class="titulo-card"><i class="fa-solid fa-chart-column" style="color: var(--cor-primaria);"></i> Evolução Mensal (Entradas x Saídas)</h3>
+        <div style="position: relative; height: 230px; width: 100%;">
+          <canvas id="graficoEvolucaoAnual"></canvas>
+        </div>
+      </div>
+
+      <div class="card-formulario">
+        <h3 class="titulo-card"><i class="fa-solid fa-pie-chart" style="color: var(--cor-primaria);"></i> Gastos Acumulados no Ano</h3>
+        <div style="position: relative; height: 250px; width: 100%;">
+          <canvas id="graficoCategoriasAnual"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 4: EXTRATO -->
+    <div id="aba-extrato" class="aba-conteudo">
+      <div class="card-formulario">
+        <h3 class="titulo-card"><i class="fa-solid fa-clock-rotate-left" style="color: var(--cor-primaria);"></i> Histórico de Movimentações</h3>
+        <div id="lista-extrato">
+          <p style="text-align: center; color: var(--cor-suave); font-size: 0.85rem;">Nenhum registro até o momento.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 5: OPÇÕES & SIMULADOR -->
+    <div id="aba-opcoes" class="aba-conteudo">
+      
+      <!-- SIMULADOR DE INVESTIMENTO -->
+      <div class="card-formulario">
+        <h3 class="titulo-card"><i class="fa-solid fa-seedling" style="color: var(--cor-seguro);"></i> Simulador de Renda Fixa</h3>
+        <p style="font-size: 0.72rem; color: var(--cor-suave); margin-bottom: 12px;">Simule o rendimento acumulado digitando o valor que deseja guardar todos os meses:</p>
+        
+        <div class="campo">
+          <label>Aplicação Inicial (R$)</label>
+          <input type="number" id="inv-inicial" placeholder="0.00" oninput="calcularInvestimento()">
+        </div>
+
+        <div class="grid-2-campos">
+          <div class="campo">
+            <label>Aporte Mensal (R$)</label>
+            <input type="number" id="inv-mensal" placeholder="Ex: 50, 100, 200" oninput="calcularInvestimento()">
+          </div>
+          <div class="campo">
+            <label>Anos Investindo</label>
+            <input type="number" id="inv-anos" value="5" min="1" max="40" oninput="calcularInvestimento()">
+          </div>
+        </div>
+
+        <div class="grid-2-campos">
+          <div class="campo">
+            <label>Taxa Selic/CDI (% a.a.)</label>
+            <input type="number" step="0.1" id="inv-taxa" value="10.5" oninput="calcularInvestimento()">
+          </div>
+          <div class="campo">
+            <label>Inflação IPCA (% a.a.)</label>
+            <input type="number" step="0.1" id="inv-ipca" value="4.0" oninput="calcularInvestimento()">
+          </div>
+        </div>
+
+        <button type="button" class="btn-salvar" style="background: var(--cor-seguro); margin-top: 4px;" onclick="calcularInvestimento()">
+          <i class="fa-solid fa-calculator"></i> Simular Rendimento
+        </button>
+
+        <div class="card-resultado-investimento" id="box-resultado-inv">
+          <div class="linha-res-inv">
+            <span>Total Investido do Bolso:</span>
+            <strong id="res-total-investido">R$ 0,00</strong>
+          </div>
+          <div class="linha-res-inv">
+            <span>Rendimento Bruto:</span>
+            <span id="res-rendimento-bruto" style="color: var(--cor-seguro); font-weight: 600;">+ R$ 0,00</span>
+          </div>
+          <div class="linha-res-inv">
+            <span>Desconto IR (Tabela Regressiva):</span>
+            <span id="res-desconto-ir" style="color: var(--cor-alto);"> - R$ 0,00</span>
+          </div>
+          <div class="linha-res-inv destaque">
+            <span>Valor Líquido Final:</span>
+            <strong id="res-total-liquido">R$ 0,00</strong>
+          </div>
+          <p style="font-size: 0.65rem; color: #64748b; margin-top: 8px; line-height: 1.2;">
+            *Simulação aproximada baseada na taxa Selic/CDI constante e desconto do IR regressivo (15% para períodos acima de 2 anos).
+          </p>
+        </div>
+      </div>
+
+      <div class="card-formulario">
+        <h3 class="titulo-card"><i class="fa-solid fa-calculator" style="color: var(--cor-primaria);"></i> Divisão Ideal (Regra 50/30/20)</h3>
+        <p style="font-size: 0.72rem; color: var(--cor-suave); margin-bottom: 10px;">Com base na renda do mês selecionado:</p>
+        <div class="grid-regra-503020">
+          <div class="card-regra-item">
+            <h6>50% Necessidades</h6>
+            <p>Essencial</p>
+            <strong id="meta-50">R$ 0,00</strong>
+          </div>
+          <div class="card-regra-item">
+            <h6>30% Desejos</h6>
+            <p>Lazer/Estilo</p>
+            <strong id="meta-30">R$ 0,00</strong>
+          </div>
+          <div class="card-regra-item">
+            <h6>20% Poupança</h6>
+            <p>Investimento</p>
+            <strong id="meta-20">R$ 0,00</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-formulario">
+        <h3 class="titulo-card"><i class="fa-solid fa-book-open" style="color: var(--cor-primaria);"></i> Níveis de Comprometimento</h3>
+        <div class="item-legenda">
+          <div class="bolinha-cor" style="background: var(--cor-seguro);"></div>
+          <div class="texto-legenda">
+            <h5 style="color: var(--cor-seguro);">Nível Verde (Até 30%)</h5>
+            <p><strong>Seguro:</strong> Permite poupar ou investir.</p>
+          </div>
+        </div>
+
+        <div class="item-legenda">
+          <div class="bolinha-cor" style="background: var(--cor-atencao);"></div>
+          <div class="texto-legenda">
+            <h5 style="color: var(--cor-atencao);">Nível Amarelo (30% a 35%)</h5>
+            <p><strong>Atenção:</strong> Evite despesas secundárias.</p>
+          </div>
+        </div>
+
+        <div class="item-legenda">
+          <div class="bolinha-cor" style="background: var(--cor-perigo);"></div>
+          <div class="texto-legenda">
+            <h5 style="color: var(--cor-perigo);">Nível Laranja (35% a 40%)</h5>
+            <p><strong>Risco Alto:</strong> Corte gastos não essenciais.</p>
+          </div>
+        </div>
+
+        <div class="item-legenda">
+          <div class="bolinha-cor" style="background: var(--cor-alto);"></div>
+          <div class="texto-legenda">
+            <h5 style="color: var(--cor-alto);">Nível Vermelho (Acima de 40%)</h5>
+            <p><strong>Alerta Máximo:</strong> Perigo de superendividamento.</p>
+          </div>
+        </div>
+
+        <button class="btn-resetar-tudo" onclick="limparTudo()">
+          <i class="fa-solid fa-rotate-left"></i> Apagar Tudo / Reiniciar App
+        </button>
+      </div>
+    </div>
+
+    <!-- MENU INFERIOR DE ALTO DESTAQUE -->
+    <div class="menu-inferior">
+      <div class="item-menu ativo" onclick="mudarAba('aba-adicionar', this)">
+        <i class="fa-solid fa-circle-plus"></i>
+        <span>Lançar</span>
+      </div>
+      <div class="item-menu" onclick="mudarAba('aba-grafico', this)">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span>Mensal</span>
+      </div>
+      <div class="item-menu" onclick="mudarAba('aba-anual', this)">
+        <i class="fa-solid fa-chart-column"></i>
+        <span>Anual</span>
+      </div>
+      <div class="item-menu" onclick="mudarAba('aba-extrato', this)">
+        <i class="fa-solid fa-receipt"></i>
+        <span>Extrato</span>
+      </div>
+      <div class="item-menu" onclick="mudarAba('aba-opcoes', this)">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Opções</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let dados = [];
+    
+    function carregarDadosSalvos() {
+      try {
+        const dadosArmazenados = localStorage.getItem('app_liceu_financeiro');
+        if (dadosArmazenados) {
+          dados = JSON.parse(dadosArmazenados);
+        } else {
+          dados = [];
+        }
+      } catch (e) {
+        console.error("Erro ao ler localStorage:", e);
+        dados = [];
+      }
+    }
+
+    function salvarDadosLocalmente() {
+      try {
+        localStorage.setItem('app_liceu_financeiro', JSON.stringify(dados));
+      } catch (e) {
+        console.error("Erro ao salvar no localStorage:", e);
+      }
+    }
+
+    let tipoAtual = 'ganho';
+    let meuGraficoMensal = null;
+    let graficoEvolucao = null;
+    let graficoCategoriasAnual = null;
+    let dataFiltroAtual = new Date();
+
+    const nomesMeses = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+
+    const nomesMesesCurtos = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const coresLightCategorias = ['#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#64748b'];
+
+    function animarMoedas(event) {
+      const numMoedas = 3;
+      const xOrigin = event ? event.clientX : window.innerWidth / 2;
+      const yOrigin = event ? event.clientY : window.innerHeight / 2;
+
+      for (let i = 0; i < numMoedas; i++) {
+        const el = document.createElement('div');
+        el.className = 'moeda-flutuante';
+        el.innerHTML = `<i class="fa-solid fa-coins"></i> +R$`;
+        const offsetX = (Math.random() - 0.5) * 60;
+        el.style.left = `${xOrigin + offsetX - 20}px`;
+        el.style.top = `${yOrigin - 20}px`;
+        document.body.appendChild(el);
+
+        setTimeout(() => { el.remove(); }, 1200);
+      }
+    }
+
+    function init() {
+      carregarDadosSalvos();
+      document.getElementById('input-data').valueAsDate = new Date();
+      trocarTipo('ganho');
+      salvarEAtualizar();
+      calcularInvestimento();
+    }
+
+    function mudarMes(delta) {
+      dataFiltroAtual.setMonth(dataFiltroAtual.getMonth() + delta);
+      salvarEAtualizar();
+    }
+
+    function trocarTipo(tipo) {
+      tipoAtual = tipo;
+      document.getElementById('btn-tipo-ganho').classList.toggle('ativo', tipo === 'ganho');
+      document.getElementById('btn-tipo-gasto').classList.toggle('ativo', tipo === 'gasto');
+      document.getElementById('campo-categoria').style.display = (tipo === 'ganho') ? 'none' : 'block';
+    }
+
+    function mudarAba(idAba, el) {
+      document.querySelectorAll('.aba-conteudo').forEach(aba => aba.classList.remove('ativa'));
+      document.querySelectorAll('.item-menu').forEach(item => item.classList.remove('ativo'));
+      
+      const abaAlvo = document.getElementById(idAba);
+      abaAlvo.classList.add('ativa');
+      el.classList.add('ativo');
+
+      if (idAba === 'aba-grafico') {
+        renderizarGraficoMensal();
+      } else if (idAba === 'aba-anual') {
+        renderizarRelatorioAnual();
+      }
+    }
+
+    document.getElementById('form-movimentacao').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const desc = document.getElementById('input-desc').value;
+      const valor = parseFloat(document.getElementById('input-valor').value);
+      const dataStr = document.getElementById('input-data').value;
+      const categoria = tipoAtual === 'gasto' ? document.getElementById('select-categoria').value : 'Renda/Ganho';
+
+      dados.push({ id: Date.now(), desc, valor, tipo: tipoAtual, categoria, data: dataStr });
+      
+      const partesData = dataStr.split('-');
+      dataFiltroAtual = new Date(parseInt(partesData[0]), parseInt(partesData[1]) - 1, 1);
+
+      if (tipoAtual === 'ganho') {
+        animarMoedas(e);
+      }
+
+      salvarDadosLocalmente();
+      salvarEAtualizar();
+
+      this.reset();
+      document.getElementById('input-data').valueAsDate = new Date();
+      trocarTipo('ganho');
+    });
+
+    function apagarItem(id) {
+      if (confirm("Deseja apagar este registro especificamente?")) {
+        dados = dados.filter(item => item.id !== id);
+        salvarDadosLocalmente();
+        salvarEAtualizar();
+      }
+    }
+
+    function salvarEAtualizar() {
+      const ano = dataFiltroAtual.getFullYear();
+      const mes = dataFiltroAtual.getMonth();
+
+      document.getElementById('label-mes-ano').innerText = `${nomesMeses[mes]} / ${ano}`;
+
+      const dadosFiltrados = dados.filter(item => {
+        if (!item.data) return true;
+        const partes = item.data.split('-');
+        const itemAno = parseInt(partes[0]);
+        const itemMes = parseInt(partes[1]) - 1;
+        return itemAno === ano && itemMes === mes;
+      });
+
+      let ganhos = 0;
+      let gastos = 0;
+      const elExtrato = document.getElementById('lista-extrato');
+      
+      if (dadosFiltrados.length === 0) {
+        elExtrato.innerHTML = `<p style="text-align: center; color: var(--cor-suave); font-size: 0.85rem; padding: 15px 0;">Nenhum registro neste mês.</p>`;
+      } else {
+        elExtrato.innerHTML = '';
+      }
+
+      dadosFiltrados.slice().reverse().forEach(item => {
+        if (item.tipo === 'ganho') ganhos += item.valor;
+        else gastos += item.valor;
+
+        const dataFormatada = item.data ? item.data.split('-').reverse().slice(0,2).join('/') : '';
+
+        elExtrato.innerHTML += `
+          <div class="item-extrato">
+            <div class="info">
+              <h4>${item.desc}</h4>
+              <span>${item.tipo === 'ganho' ? 'Renda' : item.categoria} ${dataFormatada ? '• ' + dataFormatada : ''}</span>
+            </div>
+            <div class="lado-direito-item">
+              <strong style="color: ${item.tipo === 'ganho' ? 'var(--cor-seguro)' : 'var(--cor-alto)'}">
+                ${item.tipo === 'ganho' ? '+' : '-'} R$ ${item.valor.toFixed(2)}
+              </strong>
+              <i class="fa-solid fa-trash-can btn-deletar-item" title="Apagar entrada" onclick="apagarItem(${item.id})"></i>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('val-ganhos').innerText = `R$ ${ganhos.toFixed(2)}`;
+      document.getElementById('val-gastos').innerText = `R$ ${gastos.toFixed(2)}`;
+      document.getElementById('val-saldo').innerText = `R$ ${(ganhos - gastos).toFixed(2)}`;
+
+      document.getElementById('meta-50').innerText = `R$ ${(ganhos * 0.50).toFixed(2)}`;
+      document.getElementById('meta-30').innerText = `R$ ${(ganhos * 0.30).toFixed(2)}`;
+      document.getElementById('meta-20').innerText = `R$ ${(ganhos * 0.20).toFixed(2)}`;
+
+      calcularSemafaroSerasa(ganhos, gastos);
+
+      if (document.getElementById('aba-grafico').classList.contains('ativa')) {
+        renderizarGraficoMensal();
+      } else if (document.getElementById('aba-anual').classList.contains('ativa')) {
+        renderizarRelatorioAnual();
+      }
+    }
+
+    function calcularSemafaroSerasa(ganhos, gastos) {
+      const box = document.getElementById('box-status');
+      const texto = document.getElementById('texto-semaforo');
+      const icone = document.getElementById('icone-semaforo');
+
+      if (ganhos <= 0) {
+        texto.innerText = "Cadastre seus ganhos para ver a análise";
+        box.style.background = "#64748b";
+        icone.className = "fa-solid fa-circle-info";
+        return;
+      }
+
+      const pct = (gastos / ganhos) * 100;
+
+      if (pct <= 30) {
+        texto.innerText = `Nível Verde: Seguro (${pct.toFixed(0)}% comprometido)`;
+        box.style.background = "var(--cor-seguro)";
+        icone.className = "fa-solid fa-circle-check";
+      } else if (pct > 30 && pct <= 35) {
+        texto.innerText = `Nível Amarelo: Atenção! (${pct.toFixed(0)}%)`;
+        box.style.background = "var(--cor-atencao)";
+        icone.className = "fa-solid fa-triangle-exclamation";
+      } else if (pct > 35 && pct <= 40) {
+        texto.innerText = `Nível Laranja: Perigo! (${pct.toFixed(0)}%)`;
+        box.style.background = "var(--cor-perigo)";
+        icone.className = "fa-solid fa-circle-exclamation";
+      } else {
+        texto.innerText = `Nível Vermelho: Superendividamento (${pct.toFixed(0)}%)`;
+        box.style.background = "var(--cor-alto)";
+        icone.className = "fa-solid fa-skull-crossbones";
+      }
+    }
+
+    /* FUNÇÃO DO SIMULADOR DE INVESTIMENTO */
+    function calcularInvestimento() {
+      const vInicial = parseFloat(document.getElementById('inv-inicial').value) || 0;
+      const vMensal = parseFloat(document.getElementById('inv-mensal').value) || 0;
+      const anos = parseInt(document.getElementById('inv-anos').value) || 1;
+      const taxaAnual = parseFloat(document.getElementById('inv-taxa').value) || 0;
+
+      const meses = anos * 12;
+      const taxaMensal = Math.pow(1 + (taxaAnual / 100), 1 / 12) - 1;
+
+      let saldoBruto = vInicial;
+      let totalInvestido = vInicial;
+
+      for (let i = 0; i < meses; i++) {
+        saldoBruto += vMensal;
+        totalInvestido += vMensal;
+        saldoBruto *= (1 + taxaMensal);
+      }
+
+      const rendimentoBruto = saldoBruto - totalInvestido;
+
+      // Cálculo da Tabela Regressiva do IR
+      let aliquotaIR = 0.15; // padrão > 2 anos
+      const dias = anos * 365;
+
+      if (dias <= 180) aliquotaIR = 0.225;
+      else if (dias <= 360) aliquotaIR = 0.18;
+      else if (dias <= 720) aliquotaIR = 0.175;
+
+      const descontoIR = rendimentoBruto > 0 ? rendimentoBruto * aliquotaIR : 0;
+      const saldoLiquido = saldoBruto - descontoIR;
+
+      document.getElementById('res-total-investido').innerText = `R$ ${totalInvestido.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+      document.getElementById('res-rendimento-bruto').innerText = `+ R$ ${rendimentoBruto.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+      document.getElementById('res-desconto-ir').innerText = `- R$ ${descontoIR.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${(aliquotaIR * 100).toFixed(1)}%)`;
+      document.getElementById('res-total-liquido').innerText = `R$ ${saldoLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    }
+
+    function renderizarGraficoMensal() {
+      const ano = dataFiltroAtual.getFullYear();
+      const mes = dataFiltroAtual.getMonth();
+
+      const categorias = {
+        'Moradia e Habitação': 0,
+        'Alimentação': 0,
+        'Transporte': 0,
+        'Saúde': 0,
+        'Educação': 0,
+        'Lazer e Estilo de Vida': 0,
+        'Serviços Financeiros e Dívidas': 0
+      };
+
+      dados.filter(d => {
+        if (d.tipo !== 'gasto' || !d.data) return false;
+        const partes = d.data.split('-');
+        return parseInt(partes[0]) === ano && (parseInt(partes[1]) - 1) === mes;
+      }).forEach(item => {
+        if (categorias[item.categoria] !== undefined) {
+          categorias[item.categoria] += item.valor;
+        } else {
+          categorias['Serviços Financeiros e Dívidas'] += item.valor;
+        }
+      });
+
+      const ctx = document.getElementById('graficoCategorias').getContext('2d');
+      if (meuGraficoMensal) meuGraficoMensal.destroy();
+
+      meuGraficoMensal = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(categorias),
+          datasets: [{
+            data: Object.values(categorias),
+            backgroundColor: coresLightCategorias,
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { animateScale: true, animateRotate: true },
+          plugins: {
+            legend: { position: 'bottom', labels: { font: { size: 9, weight: 'bold' }, color: '#475569', boxWidth: 12 } }
+          }
+        }
+      });
+    }
+
+    function renderizarRelatorioAnual() {
+      const ano = dataFiltroAtual.getFullYear();
+      document.getElementById('ano-relatorio').innerText = ano;
+
+      let ganhosAno = Array(12).fill(0);
+      let gastosAno = Array(12).fill(0);
+
+      let totalGanhos = 0;
+      let totalGastos = 0;
+
+      const categoriasAnual = {
+        'Moradia e Habitação': 0,
+        'Alimentação': 0,
+        'Transporte': 0,
+        'Saúde': 0,
+        'Educação': 0,
+        'Lazer e Estilo de Vida': 0,
+        'Serviços Financeiros e Dívidas': 0
+      };
+
+      dados.forEach(item => {
+        if (!item.data) return;
+        const partes = item.data.split('-');
+        const itemAno = parseInt(partes[0]);
+        const itemMes = parseInt(partes[1]) - 1;
+
+        if (itemAno === ano) {
+          if (item.tipo === 'ganho') {
+            ganhosAno[itemMes] += item.valor;
+            totalGanhos += item.valor;
+          } else {
+            gastosAno[itemMes] += item.valor;
+            totalGastos += item.valor;
+            if (categoriasAnual[item.categoria] !== undefined) {
+              categoriasAnual[item.categoria] += item.valor;
+            } else {
+              categoriasAnual['Serviços Financeiros e Dívidas'] += item.valor;
+            }
+          }
+        }
+      });
+
+      document.getElementById('anual-ganhos').innerText = `R$ ${totalGanhos.toFixed(2)}`;
+      document.getElementById('anual-gastos').innerText = `R$ ${totalGastos.toFixed(2)}`;
+      document.getElementById('anual-saldo').innerText = `R$ ${(totalGanhos - totalGastos).toFixed(2)}`;
+
+      const ctxEvolucao = document.getElementById('graficoEvolucaoAnual').getContext('2d');
+      if (graficoEvolucao) graficoEvolucao.destroy();
+
+      graficoEvolucao = new Chart(ctxEvolucao, {
+        type: 'bar',
+        data: {
+          labels: nomesMesesCurtos,
+          datasets: [
+            { label: 'Entradas', data: ganhosAno, backgroundColor: '#10b981', borderRadius: 4 },
+            { label: 'Saídas', data: gastosAno, backgroundColor: '#ef4444', borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 1000 },
+          plugins: {
+            legend: { position: 'top', labels: { font: { size: 10, weight: 'bold' }, color: '#475569', boxWidth: 10 } }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#64748b' } },
+            y: { grid: { color: 'rgba(0, 0, 0, 0.05)' }, ticks: { font: { size: 9 }, color: '#64748b' } }
+          }
+        }
+      });
+
+      const ctxCatAnual = document.getElementById('graficoCategoriasAnual').getContext('2d');
+      if (graficoCategoriasAnual) graficoCategoriasAnual.destroy();
+
+      graficoCategoriasAnual = new Chart(ctxCatAnual, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(categoriasAnual),
+          datasets: [{
+            data: Object.values(categoriasAnual),
+            backgroundColor: coresLightCategorias,
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { animateScale: true },
+          plugins: {
+            legend: { position: 'bottom', labels: { font: { size: 9, weight: 'bold' }, color: '#475569', boxWidth: 12 } }
+          }
+        }
+      });
+    }
+
+    function limparTudo() {
+      if (confirm("Deseja apagar todo o histórico e começar do zero?")) {
+        dados = [];
+        salvarDadosLocalmente();
+        salvarEAtualizar();
+        alert("Todos os dados foram excluídos com sucesso.");
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+
+</body>
+</html>
